@@ -1,0 +1,4 @@
+metric,minimum_threshold,target_threshold
+3_month,1.00,1.25
+18_month,0.90,1.10
+

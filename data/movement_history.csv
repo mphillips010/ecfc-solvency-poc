@@ -1,0 +1,52 @@
+reporting_date,horizon,movement_category,positive_resources,negative_requirements,net_headroom
+2025-07-31,3_month,Opening cash,680000,0,680000
+2025-07-31,3_month,Operating cash flow,410000,1820000,-1410000
+2025-07-31,3_month,Trust and financing,180000,0,180000
+2025-07-31,3_month,Football transactions,0,160000,-160000
+2025-07-31,3_month,Risk and assumptions,0,210000,-210000
+2025-10-31,3_month,Opening cash,740000,0,740000
+2025-10-31,3_month,Operating cash flow,450000,1760000,-1310000
+2025-10-31,3_month,Trust and financing,200000,0,200000
+2025-10-31,3_month,Football transactions,100000,150000,-50000
+2025-10-31,3_month,Risk and assumptions,0,190000,-190000
+2026-01-31,3_month,Opening cash,780000,0,780000
+2026-01-31,3_month,Operating cash flow,520000,1700000,-1180000
+2026-01-31,3_month,Trust and financing,220000,0,220000
+2026-01-31,3_month,Football transactions,120000,140000,-20000
+2026-01-31,3_month,Risk and assumptions,0,180000,-180000
+2026-04-30,3_month,Opening cash,760000,0,760000
+2026-04-30,3_month,Operating cash flow,550000,1650000,-1100000
+2026-04-30,3_month,Trust and financing,230000,0,230000
+2026-04-30,3_month,Football transactions,180000,120000,60000
+2026-04-30,3_month,Risk and assumptions,0,170000,-170000
+2026-06-30,3_month,Opening cash,790000,0,790000
+2026-06-30,3_month,Operating cash flow,610000,1600000,-990000
+2026-06-30,3_month,Trust and financing,250000,0,250000
+2026-06-30,3_month,Football transactions,210000,110000,100000
+2026-06-30,3_month,Risk and assumptions,0,160000,-160000
+2025-07-31,18_month,Opening resources,1500000,0,1500000
+2025-07-31,18_month,Operating forecast,3800000,8400000,-4600000
+2025-07-31,18_month,Trust and financing,600000,0,600000
+2025-07-31,18_month,Football transactions,1250000,500000,750000
+2025-07-31,18_month,Risk and assumptions,0,1400000,-1400000
+2025-10-31,18_month,Opening resources,1600000,0,1600000
+2025-10-31,18_month,Operating forecast,4000000,8250000,-4250000
+2025-10-31,18_month,Trust and financing,650000,0,650000
+2025-10-31,18_month,Football transactions,1450000,480000,970000
+2025-10-31,18_month,Risk and assumptions,0,1350000,-1350000
+2026-01-31,18_month,Opening resources,1720000,0,1720000
+2026-01-31,18_month,Operating forecast,4200000,8100000,-3900000
+2026-01-31,18_month,Trust and financing,700000,0,700000
+2026-01-31,18_month,Football transactions,1650000,450000,1200000
+2026-01-31,18_month,Risk and assumptions,0,1300000,-1300000
+2026-04-30,18_month,Opening resources,1800000,0,1800000
+2026-04-30,18_month,Operating forecast,4400000,7950000,-3550000
+2026-04-30,18_month,Trust and financing,750000,0,750000
+2026-04-30,18_month,Football transactions,1850000,420000,1430000
+2026-04-30,18_month,Risk and assumptions,0,1250000,-1250000
+2026-06-30,18_month,Opening resources,1900000,0,1900000
+2026-06-30,18_month,Operating forecast,4600000,7800000,-3200000
+2026-06-30,18_month,Trust and financing,800000,0,800000
+2026-06-30,18_month,Football transactions,2050000,400000,1650000
+2026-06-30,18_month,Risk and assumptions,0,1200000,-1200000
+
