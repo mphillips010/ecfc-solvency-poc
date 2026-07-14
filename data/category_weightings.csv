@@ -1,23 +1,22 @@
 direction,category,weight_3_month,weight_18_month,application_note
-positive,Unrestricted cash,1.00,1.00,Exclude restricted or ring-fenced balances
-positive,Receivables - high certainty,0.90,0.95,Contracted and low credit risk
-positive,Forecast operating revenue,0.70,0.80,Use net cash contribution and downside assumptions
+positive,Unrestricted cash,1.0,1.0,Exclude restricted or ring-fenced balances
+positive,Receivables - high certainty,0.9,0.95,Contracted and low credit risk
+positive,Forecast operating revenue,0.7,0.8,Use net cash contribution and downside assumptions
 positive,EFL and broadcasting receipts,0.95,0.95,Confirmed entitlements only
-positive,Committed Trust support,0.90,0.95,Must be approved available and not double counted
-positive,Committed facilities,0.80,0.80,Legally available and conditions satisfied
-positive,Contracted transfer receivables,0.85,0.90,Net of deductions and counterparty risk
-positive,Probable player trading,0.00,0.30,Exclude from short-term base unless contracted
+positive,Committed Trust support,0.9,0.95,Must be approved available and not double counted
+positive,Committed facilities,0.8,0.8,Legally available and conditions satisfied
+positive,Contracted transfer receivables,0.85,0.9,Net of deductions and counterparty risk
+positive,Probable player trading,0.0,0.3,Exclude from short-term base unless contracted
 positive,Triggered sell-ons and add-ons,0.75,0.85,Recognise settlement timing
-positive,Untriggered sell-ons and add-ons,0.00,0.20,Expected value with documented probability
-positive,Player portfolio value,0.00,0.15,Apply portfolio and concentration limits
-negative,Payroll and employment taxes,1.00,1.00,Full contractual or forecast cash requirement
-negative,HMRC and statutory obligations,1.00,1.00,No haircut
-negative,Football creditors,1.00,1.00,Reflect due dates
-negative,Essential operating costs,1.00,1.00,Unavoidable and committed amounts
-negative,Debt and lease service,1.00,1.00,Full contracted amount
-negative,Essential capex,1.00,1.00,Unavoidable safety and maintenance spend
-negative,Protected academy baseline,1.00,1.00,Agreed minimum strategic commitment
-negative,Forecast operating expenditure,1.00,1.00,Avoid duplication with balance-sheet liabilities
-negative,Relegation and revenue downside,0.10,1.00,Full modelled downside in long-term metric
-negative,Working capital risk margin,1.00,1.00,Explicit margin rather than hidden haircut
-
+positive,Untriggered sell-ons and add-ons,0.0,0.2,Expected value with documented probability
+positive,Player portfolio value,0.0,0.15,Apply portfolio and concentration limits
+negative,Payroll and employment taxes,1.0,1.0,Full contractual or forecast cash requirement
+negative,HMRC and statutory obligations,1.0,1.0,No haircut
+negative,Football creditors,1.0,1.0,Reflect due dates
+negative,Essential operating costs,1.0,1.0,Unavoidable and committed amounts
+negative,Debt and lease service,1.0,1.0,Full contracted amount
+negative,Essential capex,1.0,1.0,Unavoidable safety and maintenance spend
+negative,Protected academy baseline,1.0,1.0,Agreed minimum strategic commitment
+negative,Forecast operating expenditure,1.0,1.0,Avoid duplication with balance-sheet liabilities
+negative,Relegation and revenue downside,0.1,1.0,Full modelled downside in long-term metric
+negative,Working capital risk margin,1.0,1.0,Explicit margin rather than hidden haircut
