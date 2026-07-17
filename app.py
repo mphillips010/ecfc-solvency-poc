@@ -22,102 +22,113 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------------------
-# PAGE STYLING - FORMAL CORPORATE DESIGN
+# PAGE STYLING - CLEAN AND FORMAL
 # ---------------------------------------------------------------------
 st.markdown(
     """
     <style>
+        * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
         .block-container {
             padding-top: 1.5rem;
             padding-bottom: 2.5rem;
         }
 
         .dashboard-header {
-            border-bottom: 2px solid #1f2937;
-            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #d1d5db;
+            padding-bottom: 2rem;
             margin-bottom: 2rem;
         }
 
         .dashboard-title {
-            color: #0f172a;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.01em;
+            color: #111827;
+            font-size: 2.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
         }
 
         .dashboard-subtitle {
             color: #4b5563;
-            font-size: 1.05rem;
-            font-weight: 500;
-            line-height: 1.6;
-            margin-bottom: 0;
+            font-size: 0.95rem;
+            font-weight: 400;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
         }
 
         .disclaimer-text {
             color: #6b7280;
-            font-size: 0.9rem;
-            font-style: italic;
-            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: #f9fafb;
+            border-left: 3px solid #d97706;
+            border-radius: 4px;
         }
 
         .metric-card {
-            border-radius: 8px;
-            padding: 1.5rem;
-            min-height: 180px;
+            border-radius: 6px;
+            padding: 1.25rem;
+            min-height: 160px;
             border: 1px solid #e5e7eb;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
             background: #ffffff;
+            display: flex;
+            flex-direction: column;
         }
 
         .metric-label {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: #4b5563;
-            margin-bottom: 0.75rem;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
         }
 
         .metric-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #0f172a;
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #111827;
             margin-bottom: 0.5rem;
-            font-family: 'Courier New', monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
         }
 
         .metric-detail {
-            font-size: 0.9rem;
-            line-height: 1.6;
+            font-size: 0.8rem;
+            line-height: 1.5;
             color: #6b7280;
+            margin-bottom: auto;
         }
 
         .metric-status {
             display: inline-block;
-            margin-top: 1rem;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
+            margin-top: 0.75rem;
+            padding: 0.35rem 0.65rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.03em;
+            width: fit-content;
         }
 
         .card-compliant {
             background: #f0fdf4;
-            border-left: 3px solid #059669;
+            border-left: 4px solid #059669;
             color: #065f46;
         }
 
         .card-compliant .metric-status {
-            background: #dcfce7;
+            background: #d1fae5;
             color: #065f46;
         }
 
         .card-caution {
             background: #fffbeb;
-            border-left: 3px solid #d97706;
+            border-left: 4px solid #d97706;
             color: #78350f;
         }
 
@@ -128,7 +139,7 @@ st.markdown(
 
         .card-critical {
             background: #fef2f2;
-            border-left: 3px solid #dc2626;
+            border-left: 4px solid #dc2626;
             color: #7f1d1d;
         }
 
@@ -138,30 +149,35 @@ st.markdown(
         }
 
         .section-header {
-            color: #0f172a;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-top: 2rem;
+            color: #111827;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 2.5rem;
             margin-bottom: 1.5rem;
             border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 1rem;
+            padding-bottom: 0.75rem;
         }
 
         .control-label {
-            color: #0f172a;
+            color: #111827;
             font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .expander-header {
-            color: #0f172a;
-            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 0.5rem;
         }
 
         .info-text {
             color: #4b5563;
             line-height: 1.6;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+        }
+
+        .tab-description {
+            color: #4b5563;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
         }
     </style>
     """,
@@ -227,11 +243,11 @@ st.markdown(
     '<div class="dashboard-header">'
     '<div class="dashboard-title">Exeter City Football Club — Solvency Analysis Dashboard</div>'
     '<div class="dashboard-subtitle">'
-    'Short-term liquidity position (13 weeks) and long-term sustainability position (18 months) analysis, '
-    'incorporating scenario modelling and contribution analysis.'
+    'Analysis of short-term liquidity position (13 weeks) and long-term sustainability position (18 months) '
+    'with scenario modelling and contribution analysis.'
     '</div>'
     '<div class="disclaimer-text">'
-    '⚠️ Proof of concept — for illustrative purposes only. Subject to validation and formal approval prior to operational use.'
+    '⚠️ Proof of Concept — For illustrative purposes only. Subject to validation and formal approval prior to operational use.'
     '</div>'
     '</div>',
     unsafe_allow_html=True,
@@ -382,8 +398,8 @@ with c2:
         "13-Week Liquidity Headroom",
         f"£{short_result.headroom:,.0f}",
         (
-            f"Positive resources: £{short_result.positives:,.0f} | "
-            f"Liquidity requirements: £{short_result.negatives:,.0f}"
+            f"Resources: £{short_result.positives:,.0f} | "
+            f"Requirements: £{short_result.negatives:,.0f}"
         ),
         short_result.status,
     )
@@ -401,8 +417,8 @@ with c4:
         "18-Month Sustainability Headroom",
         f"£{long_result.headroom:,.0f}",
         (
-            f"Positive resources: £{long_result.positives:,.0f} | "
-            f"Sustainability requirements: £{long_result.negatives:,.0f}"
+            f"Resources: £{long_result.positives:,.0f} | "
+            f"Requirements: £{long_result.negatives:,.0f}"
         ),
         long_result.status,
     )
@@ -477,7 +493,7 @@ tab1, tab2, tab3, tab4 = st.tabs(
 )
 
 with tab1:
-    st.markdown('**Movement in liquidity and sustainability headroom between reporting periods**', unsafe_allow_html=True)
+    st.markdown('<div class="tab-description">Movement in liquidity and sustainability headroom between reporting periods</div>', unsafe_allow_html=True)
     m1, m2 = st.columns(2)
     with m1:
         st.plotly_chart(
@@ -491,7 +507,7 @@ with tab1:
         )
 
 with tab2:
-    st.markdown('**Eligible contributions aggregated by contributor type and category**', unsafe_allow_html=True)
+    st.markdown('<div class="tab-description">Eligible contributions aggregated by contributor type and category</div>', unsafe_allow_html=True)
     p1, p2 = st.columns(2)
     with p1:
         st.write("**13-Week Contribution Summary**")
@@ -509,7 +525,7 @@ with tab2:
         )
 
 with tab3:
-    st.markdown('**Line-item calculation detail with applied assumptions and eligible contribution**', unsafe_allow_html=True)
+    st.markdown('<div class="tab-description">Line-item calculation detail with applied assumptions and eligible contribution</div>', unsafe_allow_html=True)
     horizon = st.radio(
         "Select calculation horizon:",
         ["3_month", "18_month"],
@@ -556,7 +572,7 @@ with tab3:
     )
 
 with tab4:
-    st.markdown('**Data integrity and consistency validation checks**', unsafe_allow_html=True)
+    st.markdown('<div class="tab-description">Data integrity and consistency validation checks</div>', unsafe_allow_html=True)
     checks = validate_inputs(filtered_items, edited_weights)
     st.dataframe(
         checks,
