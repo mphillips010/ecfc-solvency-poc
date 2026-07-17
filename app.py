@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+import numpy as np
 
 from src.model import (
     calculate_contributions,
@@ -179,6 +180,27 @@ st.markdown(
             margin-bottom: 1rem;
             font-weight: 500;
         }
+
+        .sensitivity-container {
+            background: #f9fafb;
+            border-radius: 6px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .sensitivity-label {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .sensitivity-value {
+            color: #059669;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
     </style>
     """,
     unsafe_allow_html=True,
@@ -252,6 +274,18 @@ st.markdown(
     '</div>',
     unsafe_allow_html=True,
 )
+
+# Initialize session state for sensitivity factors
+if 'revenue_adjustment' not in st.session_state:
+    st.session_state.revenue_adjustment = 0
+if 'operating_costs_adjustment' not in st.session_state:
+    st.session_state.operating_costs_adjustment = 0
+if 'cashflow_timing_adjustment' not in st.session_state:
+    st.session_state.cashflow_timing_adjustment = 0
+if 'probability_adjustment' not in st.session_state:
+    st.session_state.probability_adjustment = 0
+if 'show_sensitivity' not in st.session_state:
+    st.session_state.show_sensitivity = False
 
 # ---------------------------------------------------------------------
 # CONTROLS
@@ -350,15 +384,26 @@ short_target = float(threshold_map.loc["3_month", "target_threshold"])
 long_min = float(threshold_map.loc["18_month", "minimum_threshold"])
 long_target = float(threshold_map.loc["18_month", "target_threshold"])
 
+# Apply sensitivity adjustments to line items
+adjusted_items = filtered_items.copy()
+if st.session_state.revenue_adjustment != 0:
+    adjusted_items.loc[adjusted_items["direction"].eq("positive"), "gross_amount"] *= (1 + st.session_state.revenue_adjustment / 100)
+if st.session_state.operating_costs_adjustment != 0:
+    adjusted_items.loc[adjusted_items["direction"].eq("negative"), "gross_amount"] *= (1 + st.session_state.operating_costs_adjustment / 100)
+if st.session_state.cashflow_timing_adjustment != 0:
+    adjusted_items["relevance_3_month"] = adjusted_items["relevance_3_month"].clip(0, 1) * (1 + st.session_state.cashflow_timing_adjustment / 100)
+if st.session_state.probability_adjustment != 0:
+    adjusted_items["probability"] = adjusted_items["probability"].clip(0, 1) * (1 + st.session_state.probability_adjustment / 100)
+
 short_detail = calculate_contributions(
-    filtered_items,
+    adjusted_items,
     edited_weights,
     "3_month",
     scenario=scenario,
     consolidated=consolidated,
 )
 long_detail = calculate_contributions(
-    filtered_items,
+    adjusted_items,
     edited_weights,
     "18_month",
     scenario=scenario,
@@ -377,6 +422,96 @@ long_result = calculate_solvency(
     long_min,
     long_target,
 )
+
+# ---------------------------------------------------------------------
+# SENSITIVITY ANALYSIS
+# ---------------------------------------------------------------------
+st.markdown('<div class="section-header">Sensitivity Analysis</div>', unsafe_allow_html=True)
+
+sensitivity_expander = st.expander("Adjust Key Factors to Analyze Sensitivity", expanded=False)
+
+with sensitivity_expander:
+    st.markdown('<div class="info-text">', unsafe_allow_html=True)
+    st.write(
+        "Model solvency position under different assumptions. Adjust factors as percentages to see impact on liquidity and sustainability."
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown('<div class="sensitivity-label">Revenue / Positive Cash Inflows</div>', unsafe_allow_html=True)
+        revenue_adj = st.slider(
+            "Revenue adjustment (%)",
+            min_value=-50,
+            max_value=50,
+            value=st.session_state.revenue_adjustment,
+            step=5,
+            label_visibility="collapsed",
+            help="Adjust expected revenue by percentage (e.g., -10 = 10% reduction)",
+        )
+        if revenue_adj != st.session_state.revenue_adjustment:
+            st.session_state.revenue_adjustment = revenue_adj
+            st.rerun()
+        
+        st.markdown('<div class="sensitivity-label">Operating Costs / Negative Cash Outflows</div>', unsafe_allow_html=True)
+        costs_adj = st.slider(
+            "Operating costs adjustment (%)",
+            min_value=-50,
+            max_value=50,
+            value=st.session_state.operating_costs_adjustment,
+            step=5,
+            label_visibility="collapsed",
+            help="Adjust expected costs by percentage (e.g., +10 = 10% increase)",
+        )
+        if costs_adj != st.session_state.operating_costs_adjustment:
+            st.session_state.operating_costs_adjustment = costs_adj
+            st.rerun()
+    
+    with col2:
+        st.markdown('<div class="sensitivity-label">Cash Flow Timing / Horizon Relevance</div>', unsafe_allow_html=True)
+        timing_adj = st.slider(
+            "Cashflow timing adjustment (%)",
+            min_value=-50,
+            max_value=50,
+            value=st.session_state.cashflow_timing_adjustment,
+            step=5,
+            label_visibility="collapsed",
+            help="Adjust expected cash flow timing by percentage (e.g., -20 = delays reduce near-term availability)",
+        )
+        if timing_adj != st.session_state.cashflow_timing_adjustment:
+            st.session_state.cashflow_timing_adjustment = timing_adj
+            st.rerun()
+        
+        st.markdown('<div class="sensitivity-label">Probability of Realization</div>', unsafe_allow_html=True)
+        prob_adj = st.slider(
+            "Probability adjustment (%)",
+            min_value=-50,
+            max_value=50,
+            value=st.session_state.probability_adjustment,
+            step=5,
+            label_visibility="collapsed",
+            help="Adjust probability weighting by percentage (e.g., -15 = reduce confidence in assumptions)",
+        )
+        if prob_adj != st.session_state.probability_adjustment:
+            st.session_state.probability_adjustment = prob_adj
+            st.rerun()
+    
+    # Display sensitivity summary
+    if any([revenue_adj, costs_adj, timing_adj, prob_adj]):
+        st.divider()
+        st.write("**Sensitivity Summary**")
+        sensitivity_summary = []
+        if revenue_adj != 0:
+            sensitivity_summary.append(f"Revenue: {revenue_adj:+d}%")
+        if costs_adj != 0:
+            sensitivity_summary.append(f"Operating costs: {costs_adj:+d}%")
+        if timing_adj != 0:
+            sensitivity_summary.append(f"Cashflow timing: {timing_adj:+d}%")
+        if prob_adj != 0:
+            sensitivity_summary.append(f"Probability: {prob_adj:+d}%")
+        
+        st.caption(" | ".join(sensitivity_summary))
 
 # ---------------------------------------------------------------------
 # HEADLINE SOLVENCY POSITION
