@@ -16,102 +16,152 @@ from src.charts import trend_chart, category_chart, movement_waterfall
 DATA_DIR = Path(__file__).parent / "data"
 
 st.set_page_config(
-    page_title="ECFC Solvency Dashboard",
-    page_icon="⚽",
+    page_title="Solvency Analysis Dashboard",
+    page_icon="📊",
     layout="wide",
 )
 
 # ---------------------------------------------------------------------
-# PAGE STYLING
+# PAGE STYLING - FORMAL CORPORATE DESIGN
 # ---------------------------------------------------------------------
 st.markdown(
     """
     <style>
         .block-container {
-            padding-top: 1.25rem;
-            padding-bottom: 2rem;
+            padding-top: 1.5rem;
+            padding-bottom: 2.5rem;
+        }
+
+        .dashboard-header {
+            border-bottom: 2px solid #1f2937;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .dashboard-title {
-            color: #111827;
-            font-size: 2.1rem;
-            font-weight: 800;
-            margin-bottom: 0.1rem;
+            color: #0f172a;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.01em;
         }
 
         .dashboard-subtitle {
-            color: #6B7280;
-            font-size: 1rem;
-            margin-bottom: 1rem;
+            color: #4b5563;
+            font-size: 1.05rem;
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        .disclaimer-text {
+            color: #6b7280;
+            font-size: 0.9rem;
+            font-style: italic;
+            margin-top: 0.5rem;
         }
 
         .metric-card {
-            border-radius: 14px;
-            padding: 18px 20px;
-            min-height: 155px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+            border-radius: 8px;
+            padding: 1.5rem;
+            min-height: 180px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            background: #ffffff;
         }
 
         .metric-label {
-            font-size: 0.88rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #4b5563;
+            margin-bottom: 0.75rem;
+        }
+
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .metric-detail {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #6b7280;
+        }
+
+        .metric-status {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.04em;
         }
 
-        .metric-value {
-            font-size: 2.05rem;
-            font-weight: 800;
-            margin-top: 8px;
-            margin-bottom: 5px;
+        .card-compliant {
+            background: #f0fdf4;
+            border-left: 3px solid #059669;
+            color: #065f46;
         }
 
-        .metric-detail {
-            font-size: 0.88rem;
-            line-height: 1.35;
+        .card-compliant .metric-status {
+            background: #dcfce7;
+            color: #065f46;
         }
 
-        .metric-status {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 0.78rem;
-            font-weight: 800;
+        .card-caution {
+            background: #fffbeb;
+            border-left: 3px solid #d97706;
+            color: #78350f;
         }
 
-        .card-green {
-            background: #DCFCE7;
-            border-left: 8px solid #16A34A;
-            color: #166534;
+        .card-caution .metric-status {
+            background: #fef3c7;
+            color: #78350f;
         }
 
-        .card-green .metric-status {
-            background: #BBF7D0;
-            color: #166534;
+        .card-critical {
+            background: #fef2f2;
+            border-left: 3px solid #dc2626;
+            color: #7f1d1d;
         }
 
-        .card-amber {
-            background: #FEF3C7;
-            border-left: 8px solid #F59E0B;
-            color: #92400E;
+        .card-critical .metric-status {
+            background: #fee2e2;
+            color: #7f1d1d;
         }
 
-        .card-amber .metric-status {
-            background: #FDE68A;
-            color: #92400E;
+        .section-header {
+            color: #0f172a;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1rem;
         }
 
-        .card-red {
-            background: #FEE2E2;
-            border-left: 8px solid #DC2626;
-            color: #991B1B;
+        .control-label {
+            color: #0f172a;
+            font-weight: 600;
+            font-size: 0.95rem;
         }
 
-        .card-red .metric-status {
-            background: #FECACA;
-            color: #991B1B;
+        .expander-header {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .info-text {
+            color: #4b5563;
+            line-height: 1.6;
+            font-size: 0.95rem;
         }
     </style>
     """,
@@ -123,10 +173,20 @@ def card_class(status: str) -> str:
     """Return the CSS class used for the metric card."""
     normalised = str(status).upper().strip()
     if normalised == "GREEN":
-        return "card-green"
+        return "card-compliant"
     if normalised == "RED":
-        return "card-red"
-    return "card-amber"
+        return "card-critical"
+    return "card-caution"
+
+
+def metric_status_label(status: str) -> str:
+    """Return the formal label for the metric status."""
+    normalised = str(status).upper().strip()
+    if normalised == "GREEN":
+        return "COMPLIANT"
+    if normalised == "RED":
+        return "NON-COMPLIANT"
+    return "AT RISK"
 
 
 def metric_card(
@@ -135,15 +195,16 @@ def metric_card(
     detail: str,
     status: str,
 ) -> None:
-    """Render a metric card with explicit status colouring."""
+    """Render a metric card with formal status colouring."""
     normalised = str(status).upper().strip()
+    status_label = metric_status_label(normalised)
     st.markdown(
         f"""
         <div class="metric-card {card_class(normalised)}">
             <div class="metric-label">{label}</div>
             <div class="metric-value">{value}</div>
             <div class="metric-detail">{detail}</div>
-            <div class="metric-status">{normalised}</div>
+            <div class="metric-status">{status_label}</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -163,13 +224,15 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]
 line_items, default_weights, thresholds, movement_history = load_data()
 
 st.markdown(
-    '<div class="dashboard-title">ECFC Solvency Dashboard</div>',
-    unsafe_allow_html=True,
-)
-st.markdown(
+    '<div class="dashboard-header">'
+    '<div class="dashboard-title">Exeter City Football Club — Solvency Analysis Dashboard</div>'
     '<div class="dashboard-subtitle">'
-    '13-week liquidity and 18-month sustainability, with category assumptions, '
-    'trend analysis and line-item audit trail.'
+    'Short-term liquidity position (13 weeks) and long-term sustainability position (18 months) analysis, '
+    'incorporating scenario modelling and contribution analysis.'
+    '</div>'
+    '<div class="disclaimer-text">'
+    '⚠️ Proof of concept — for illustrative purposes only. Subject to validation and formal approval prior to operational use.'
+    '</div>'
     '</div>',
     unsafe_allow_html=True,
 )
@@ -178,15 +241,20 @@ st.markdown(
 # CONTROLS
 # ---------------------------------------------------------------------
 with st.sidebar:
-    st.header("Model controls")
-    scenario = st.selectbox("Scenario", ["base"], index=0)
+    st.markdown('<div class="control-label">Model Configuration</div>', unsafe_allow_html=True)
+    st.divider()
+    
+    scenario = st.selectbox("Scenario", ["base"], index=0, help="Select the forecast scenario to analyse")
     entity_view = st.selectbox(
-        "Entity view",
+        "Entity View",
         ["Consolidated", "Club", "Trust"],
+        help="Consolidated view excludes intercompany transactions; standalone views retain selected entity only",
     )
+    
+    st.divider()
     st.caption(
-        "The consolidated view removes records flagged as intercompany. "
-        "Standalone views retain the selected entity."
+        "Consolidated view applies intercompany elimination rules. "
+        "Standalone entity views present uneliminated positions for the selected entity."
     )
 
 if entity_view == "Club":
@@ -200,7 +268,7 @@ else:
     consolidated = True
 
 # ---------------------------------------------------------------------
-# ASSUMPTIONS
+# ASSUMPTIONS - CATEGORY WEIGHTINGS
 # Store assumptions in the CSV as decimals (1.00 = 100%).
 # Display and edit them here as whole-number percentages (100 = 100%).
 # Do not use Streamlit's percentage formatter, because that treats 1 as 1%.
@@ -213,35 +281,38 @@ display_weights["weight_18_month"] = (
     pd.to_numeric(display_weights["weight_18_month"], errors="coerce") * 100
 )
 
-with st.expander("Category assumptions", expanded=False):
+with st.expander("Category Assumption Adjustments", expanded=False):
+    st.markdown('<div class="info-text">', unsafe_allow_html=True)
     st.write(
-        "Enter assumptions as whole-number percentages. "
-        "For example, enter **100** for 100%, **75** for 75%, and **0** for 0%."
+        "Modify category weighting assumptions by entering values as whole-number percentages. "
+        "For example: **100** for 100%, **75** for 75%, **0** for 0%. "
+        "Adjustments are applied without modifying underlying line-item data."
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
     edited_display_weights = st.data_editor(
         display_weights,
         disabled=["direction", "category", "application_note"],
         column_config={
-            "direction": st.column_config.TextColumn("Contributor"),
+            "direction": st.column_config.TextColumn("Contributor Type"),
             "category": st.column_config.TextColumn("Category"),
             "weight_3_month": st.column_config.NumberColumn(
-                "3-month weighting (%)",
+                "13-Week Weighting (%)",
                 min_value=0.0,
                 max_value=100.0,
                 step=5.0,
                 format="%.0f",
-                help="Whole-number percentage: 100 means 100%.",
+                help="Percentage assumption: 100 = 100%",
             ),
             "weight_18_month": st.column_config.NumberColumn(
-                "18-month weighting (%)",
+                "18-Month Weighting (%)",
                 min_value=0.0,
                 max_value=100.0,
                 step=5.0,
                 format="%.0f",
-                help="Whole-number percentage: 100 means 100%.",
+                help="Percentage assumption: 100 = 100%",
             ),
-            "application_note": st.column_config.TextColumn("Application note"),
+            "application_note": st.column_config.TextColumn("Application Notes"),
         },
         hide_index=True,
         use_container_width=True,
@@ -292,51 +363,54 @@ long_result = calculate_solvency(
 )
 
 # ---------------------------------------------------------------------
-# HOMEPAGE
+# HEADLINE SOLVENCY POSITION
 # ---------------------------------------------------------------------
-st.subheader("Headline solvency outputs")
+st.markdown('<div class="section-header">Solvency Position Summary</div>', unsafe_allow_html=True)
 
 c1, c2, c3, c4 = st.columns(4)
 
 with c1:
     metric_card(
-        "3-month solvency ratio",
+        "13-Week Solvency Ratio",
         f"{short_result.ratio:.2f}x",
-        f"Minimum {short_min:.2f}x · Target {short_target:.2f}x",
+        f"Minimum: {short_min:.2f}x | Target: {short_target:.2f}x",
         short_result.status,
     )
 
 with c2:
     metric_card(
-        "3-month headroom",
+        "13-Week Liquidity Headroom",
         f"£{short_result.headroom:,.0f}",
         (
-            f"Positive resources £{short_result.positives:,.0f}<br>"
-            f"Requirements £{short_result.negatives:,.0f}"
+            f"Positive resources: £{short_result.positives:,.0f} | "
+            f"Liquidity requirements: £{short_result.negatives:,.0f}"
         ),
         short_result.status,
     )
 
 with c3:
     metric_card(
-        "18-month solvency ratio",
+        "18-Month Solvency Ratio",
         f"{long_result.ratio:.2f}x",
-        f"Minimum {long_min:.2f}x · Target {long_target:.2f}x",
+        f"Minimum: {long_min:.2f}x | Target: {long_target:.2f}x",
         long_result.status,
     )
 
 with c4:
     metric_card(
-        "18-month headroom",
+        "18-Month Sustainability Headroom",
         f"£{long_result.headroom:,.0f}",
         (
-            f"Positive resources £{long_result.positives:,.0f}<br>"
-            f"Requirements £{long_result.negatives:,.0f}"
+            f"Positive resources: £{long_result.positives:,.0f} | "
+            f"Sustainability requirements: £{long_result.negatives:,.0f}"
         ),
         long_result.status,
     )
 
 st.write("")
+
+# Trend analysis
+st.markdown('<div class="section-header">Trend Analysis</div>', unsafe_allow_html=True)
 
 left, right = st.columns(2)
 with left:
@@ -346,6 +420,7 @@ with left:
             "3_month",
             short_min,
             short_target,
+            title="13-Week Solvency Ratio — Historical Trend",
         ),
         use_container_width=True,
     )
@@ -357,9 +432,13 @@ with right:
             "18_month",
             long_min,
             long_target,
+            title="18-Month Solvency Ratio — Historical Trend",
         ),
         use_container_width=True,
     )
+
+# Category contribution analysis
+st.markdown('<div class="section-header">Contribution Analysis by Category</div>', unsafe_allow_html=True)
 
 short_summary = category_summary(short_detail)
 long_summary = category_summary(long_detail)
@@ -369,7 +448,7 @@ with left:
     st.plotly_chart(
         category_chart(
             short_summary,
-            "3-month contribution by category",
+            "13-Week Contribution by Category",
         ),
         use_container_width=True,
     )
@@ -378,23 +457,27 @@ with right:
     st.plotly_chart(
         category_chart(
             long_summary,
-            "18-month contribution by category",
+            "18-Month Contribution by Category",
         ),
         use_container_width=True,
     )
 
 st.divider()
 
+# Detailed analysis tabs
+st.markdown('<div class="section-header">Detailed Analysis</div>', unsafe_allow_html=True)
+
 tab1, tab2, tab3, tab4 = st.tabs(
     [
-        "Movements",
-        "Contribution detail",
-        "Line-item calculation",
-        "Validation",
+        "Movement Analysis",
+        "Contribution Detail",
+        "Line-Item Calculation",
+        "Data Validation",
     ]
 )
 
 with tab1:
+    st.markdown('**Movement in liquidity and sustainability headroom between reporting periods**', unsafe_allow_html=True)
     m1, m2 = st.columns(2)
     with m1:
         st.plotly_chart(
@@ -408,14 +491,17 @@ with tab1:
         )
 
 with tab2:
+    st.markdown('**Eligible contributions aggregated by contributor type and category**', unsafe_allow_html=True)
     p1, p2 = st.columns(2)
     with p1:
+        st.write("**13-Week Contribution Summary**")
         st.dataframe(
             short_summary,
             hide_index=True,
             use_container_width=True,
         )
     with p2:
+        st.write("**18-Month Contribution Summary**")
         st.dataframe(
             long_summary,
             hide_index=True,
@@ -423,10 +509,12 @@ with tab2:
         )
 
 with tab3:
+    st.markdown('**Line-item calculation detail with applied assumptions and eligible contribution**', unsafe_allow_html=True)
     horizon = st.radio(
-        "Calculation horizon",
+        "Select calculation horizon:",
         ["3_month", "18_month"],
         horizontal=True,
+        format_func=lambda x: "13-Week" if x == "3_month" else "18-Month",
     )
     detail = short_detail if horizon == "3_month" else long_detail
 
@@ -461,13 +549,14 @@ with tab3:
     )
 
     st.download_button(
-        "Download calculation detail",
+        "Download Line-Item Calculation Detail (CSV)",
         detail[display_columns].to_csv(index=False),
-        file_name=f"solvency_calculation_{horizon}.csv",
+        file_name=f"solvency_calculation_{horizon}_detail.csv",
         mime="text/csv",
     )
 
 with tab4:
+    st.markdown('**Data integrity and consistency validation checks**', unsafe_allow_html=True)
     checks = validate_inputs(filtered_items, edited_weights)
     st.dataframe(
         checks,
@@ -477,6 +566,6 @@ with tab4:
 
     failed = checks["status"].eq("FAIL").sum()
     if failed:
-        st.error(f"{failed} validation check(s) failed.")
+        st.error(f"⚠️ {failed} validation check(s) failed. Review data quality before using results in decision-making.")
     else:
-        st.success("All proof-of-concept validation checks passed.")
+        st.success("✓ All validation checks passed. Data quality standards met.")
