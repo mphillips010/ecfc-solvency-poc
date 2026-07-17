@@ -564,7 +564,7 @@ with tab4:
         use_container_width=True,
     )
 
-    failed = checks["status"].eq("FAIL").sum()
+    failed = checks["Status"].eq("FAIL").sum()
     if failed:
         st.error(f"⚠️ {failed} validation check(s) failed. Review data quality before using results in decision-making.")
     else:
