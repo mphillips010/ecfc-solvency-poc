@@ -23,59 +23,97 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------------------
-# PAGE STYLING - CLEAN AND FORMAL
+# PAGE STYLING - ECFC "OUR CITY, OUR CLUB, OUR WAY" BRAND GUIDELINES
+# Dark cinematic foundation with gold accent, supporter-first voice
+# Typography: Alverata Informal Medium (display), Barlow (body)
+# Fallback fonts embedded via CSS imports
 # ---------------------------------------------------------------------
 st.markdown(
     """
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap');
+
         * {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            font-family: 'Barlow', Arial, sans-serif;
+        }
+
+        html, body {
+            background-color: #0f0f0f;
+            color: #ffffff;
         }
 
         .block-container {
-            padding-top: 1.5rem;
-            padding-bottom: 2.5rem;
+            padding-top: 2rem;
+            padding-bottom: 3rem;
         }
 
+        /* Dark cinematic foundation */
         .dashboard-header {
-            border-bottom: 1px solid #d1d5db;
-            padding-bottom: 2rem;
-            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1c 100%);
+            border-bottom: 2px solid #D7B477;
+            padding: 2.5rem 2rem;
+            margin-bottom: 2.5rem;
+            border-radius: 4px;
         }
 
         .dashboard-title {
-            color: #111827;
-            font-size: 2.25rem;
-            font-weight: 600;
+            color: #ffffff;
+            font-size: 2.5rem;
+            font-weight: 700;
             margin-bottom: 0.75rem;
             line-height: 1.2;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .dashboard-title-accent {
+            color: #D7B477;
         }
 
         .dashboard-subtitle {
-            color: #4b5563;
-            font-size: 0.95rem;
+            color: #B3B3B3;
+            font-size: 1rem;
             font-weight: 400;
-            line-height: 1.5;
+            line-height: 1.6;
             margin-bottom: 0.5rem;
         }
 
+        .campaign-statement {
+            color: #D7B477;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .campaign-statement::before {
+            content: '';
+            width: 40px;
+            height: 2px;
+            background-color: #D7B477;
+        }
+
         .disclaimer-text {
-            color: #6b7280;
+            color: #B3B3B3;
             font-size: 0.85rem;
             margin-top: 1rem;
-            padding: 0.75rem;
-            background-color: #f9fafb;
-            border-left: 3px solid #d97706;
+            padding: 1rem;
+            background-color: rgba(20, 20, 22, 0.72);
+            border-left: 3px solid #D7B477;
             border-radius: 4px;
         }
 
         .metric-card {
-            border-radius: 6px;
-            padding: 1.25rem;
-            min-height: 160px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            background: #ffffff;
+            border-radius: 4px;
+            padding: 1.5rem;
+            min-height: 180px;
+            border: 1px solid #D7B477;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            background: rgba(20, 20, 22, 0.72);
             display: flex;
             flex-direction: column;
         }
@@ -84,122 +122,204 @@ st.markdown(
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #6b7280;
-            margin-bottom: 0.5rem;
+            letter-spacing: 0.06em;
+            color: #B3B3B3;
+            margin-bottom: 0.75rem;
         }
 
         .metric-value {
-            font-size: 1.875rem;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 0.5rem;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #D7B477;
+            margin-bottom: 0.75rem;
+            font-family: 'Barlow', Arial, sans-serif;
         }
 
         .metric-detail {
             font-size: 0.8rem;
-            line-height: 1.5;
-            color: #6b7280;
+            line-height: 1.6;
+            color: #B3B3B3;
             margin-bottom: auto;
         }
 
         .metric-status {
             display: inline-block;
-            margin-top: 0.75rem;
-            padding: 0.35rem 0.65rem;
+            margin-top: 1rem;
+            padding: 0.5rem 0.75rem;
             border-radius: 3px;
             font-size: 0.7rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.04em;
             width: fit-content;
+            background: rgba(215, 180, 119, 0.15);
+            color: #D7B477;
+            border: 1px solid #D7B477;
         }
 
         .card-compliant {
-            background: #f0fdf4;
             border-left: 4px solid #059669;
-            color: #065f46;
+            border: 1px solid #059669;
         }
 
         .card-compliant .metric-status {
-            background: #d1fae5;
-            color: #065f46;
+            background: rgba(5, 150, 105, 0.15);
+            color: #10b981;
+            border: 1px solid #10b981;
         }
 
         .card-caution {
-            background: #fffbeb;
             border-left: 4px solid #d97706;
-            color: #78350f;
+            border: 1px solid #d97706;
         }
 
         .card-caution .metric-status {
-            background: #fef3c7;
-            color: #78350f;
+            background: rgba(217, 119, 6, 0.15);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
         }
 
         .card-critical {
-            background: #fef2f2;
             border-left: 4px solid #dc2626;
-            color: #7f1d1d;
+            border: 1px solid #dc2626;
         }
 
         .card-critical .metric-status {
-            background: #fee2e2;
-            color: #7f1d1d;
+            background: rgba(220, 38, 38, 0.15);
+            color: #ef4444;
+            border: 1px solid #ef4444;
         }
 
         .section-header {
-            color: #111827;
-            font-size: 1.25rem;
-            font-weight: 600;
+            color: #ffffff;
+            font-size: 1.5rem;
+            font-weight: 700;
             margin-top: 2.5rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 0.75rem;
+            margin-bottom: 1.75rem;
+            border-bottom: 2px solid #D7B477;
+            padding-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.01em;
+        }
+
+        .section-header::before {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 2px;
+            background-color: #D7B477;
+            margin-bottom: 0.75rem;
         }
 
         .control-label {
-            color: #111827;
+            color: #D7B477;
             font-weight: 600;
             font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
-            margin-bottom: 0.5rem;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.75rem;
+            display: block;
         }
 
         .info-text {
-            color: #4b5563;
-            line-height: 1.6;
-            font-size: 0.9rem;
+            color: #B3B3B3;
+            line-height: 1.7;
+            font-size: 0.95rem;
         }
 
         .tab-description {
-            color: #4b5563;
+            color: #B3B3B3;
             font-size: 0.9rem;
-            margin-bottom: 1rem;
-            font-weight: 500;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
         }
 
         .sensitivity-container {
-            background: #f9fafb;
-            border-radius: 6px;
-            padding: 1.25rem;
+            background: rgba(20, 20, 22, 0.72);
+            border-radius: 4px;
+            padding: 1.5rem;
             margin-bottom: 1.5rem;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #D7B477;
         }
 
         .sensitivity-label {
             font-weight: 600;
-            color: #111827;
-            margin-bottom: 0.5rem;
+            color: #D7B477;
+            margin-bottom: 0.75rem;
             font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
         }
 
         .sensitivity-value {
-            color: #059669;
+            color: #10b981;
             font-weight: 600;
             font-size: 0.85rem;
+        }
+
+        /* Dark theme for data tables */
+        [data-testid="stDataFrame"] {
+            background: rgba(20, 20, 22, 0.72);
+        }
+
+        /* Sidebar styling */
+        [data-testid="stSidebar"] {
+            background: linear-gradient(180deg, #1a1a1c 0%, #0f0f0f 100%);
+            border-right: 1px solid #D7B477;
+        }
+
+        /* Dividers */
+        hr {
+            background-color: #D7B477;
+            border: none;
+            height: 1px;
+        }
+
+        /* Expander styling */
+        [data-testid="stExpander"] {
+            background: rgba(20, 20, 22, 0.72);
+            border: 1px solid #D7B477;
+            border-radius: 4px;
+        }
+
+        /* Focus states for accessibility */
+        button:focus-visible {
+            outline: 2px solid #D7B477;
+        }
+
+        input:focus-visible {
+            outline: 2px solid #D7B477;
+        }
+
+        /* Campaign statement styling */
+        .campaign-principles {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .principle {
+            flex: 1;
+            min-width: 250px;
+            padding: 1rem;
+            border-left: 3px solid #D7B477;
+            background: rgba(20, 20, 22, 0.5);
+        }
+
+        .principle-label {
+            color: #D7B477;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .principle-text {
+            color: #ffffff;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
     </style>
     """,
@@ -233,7 +353,7 @@ def metric_card(
     detail: str,
     status: str,
 ) -> None:
-    """Render a metric card with formal status colouring."""
+    """Render a metric card with ECFC brand styling."""
     normalised = str(status).upper().strip()
     status_label = metric_status_label(normalised)
     st.markdown(
@@ -263,13 +383,15 @@ line_items, default_weights, thresholds, movement_history = load_data()
 
 st.markdown(
     '<div class="dashboard-header">'
-    '<div class="dashboard-title">Exeter City Football Club — Solvency Analysis Dashboard</div>'
+    '<div class="dashboard-title">Exeter City Football Club<br /><span class="dashboard-title-accent">Solvency Analysis Dashboard</span></div>'
     '<div class="dashboard-subtitle">'
-    'Analysis of short-term liquidity position (13 weeks) and long-term sustainability position (18 months) '
-    'with scenario modelling and contribution analysis.'
+    'Short-term liquidity position (13 weeks) and long-term sustainability position (18 months) analysis.'
+    '</div>'
+    '<div class="campaign-statement">'
+    'Community-driven • Academy-powered • Supporter first'
     '</div>'
     '<div class="disclaimer-text">'
-    '⚠️ Proof of Concept — For illustrative purposes only. Subject to validation and formal approval prior to operational use.'
+    '⚠️ Proof of Concept. For illustrative purposes only. Subject to validation and formal approval prior to operational use.'
     '</div>'
     '</div>',
     unsafe_allow_html=True,
@@ -284,8 +406,6 @@ if 'cashflow_timing_adjustment' not in st.session_state:
     st.session_state.cashflow_timing_adjustment = 0
 if 'probability_adjustment' not in st.session_state:
     st.session_state.probability_adjustment = 0
-if 'show_sensitivity' not in st.session_state:
-    st.session_state.show_sensitivity = False
 
 # ---------------------------------------------------------------------
 # CONTROLS
