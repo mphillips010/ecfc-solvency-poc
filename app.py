@@ -17,16 +17,16 @@ from src.charts import trend_chart, category_chart, movement_waterfall
 DATA_DIR = Path(__file__).parent / "data"
 
 st.set_page_config(
-    page_title="Solvency Analysis Dashboard",
+    page_title="ECFC Solvency Dashboard",
     page_icon="📊",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
 # ---------------------------------------------------------------------
-# PAGE STYLING - ECFC "OUR CITY, OUR CLUB, OUR WAY" BRAND GUIDELINES
-# Dark cinematic foundation with gold accent, supporter-first voice
-# Typography: Alverata Informal Medium (display), Barlow (body)
-# Fallback fonts embedded via CSS imports
+# COMPLETE VISUAL REDESIGN - FIRST PRINCIPLES
+# Clean, accessible, professional dashboard with ECFC brand elements
+# Dark theme for primary content, light backgrounds for data readability
 # ---------------------------------------------------------------------
 st.markdown(
     """
@@ -34,88 +34,104 @@ st.markdown(
         @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap');
 
         * {
-            font-family: 'Barlow', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
         html, body {
-            background-color: #0f0f0f;
-            color: #ffffff;
+            background-color: #ffffff;
+            color: #1f2937;
+            font-family: 'Barlow', 'Segoe UI', Arial, sans-serif;
         }
 
         .block-container {
-            padding-top: 2rem;
-            padding-bottom: 3rem;
+            max-width: 1400px;
+            padding: 2rem 1.5rem;
         }
 
-        /* Dark cinematic foundation */
-        .dashboard-header {
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1c 100%);
-            border-bottom: 2px solid #D7B477;
-            padding: 2.5rem 2rem;
-            margin-bottom: 2.5rem;
-            border-radius: 4px;
-        }
-
-        .dashboard-title {
+        /* Main header - dark bar with gold accent */
+        .page-header {
+            background-color: #111827;
             color: #ffffff;
-            font-size: 2.5rem;
+            padding: 2.5rem 2rem;
+            margin: -2rem -1.5rem 2.5rem -1.5rem;
+            border-bottom: 4px solid #D7B477;
+        }
+
+        .header-title {
+            font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 0.75rem;
-            line-height: 1.2;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-        }
-
-        .dashboard-title-accent {
-            color: #D7B477;
-        }
-
-        .dashboard-subtitle {
-            color: #B3B3B3;
-            font-size: 1rem;
-            font-weight: 400;
-            line-height: 1.6;
+            color: #ffffff;
             margin-bottom: 0.5rem;
         }
 
-        .campaign-statement {
+        .header-title-accent {
             color: #D7B477;
-            font-size: 0.9rem;
+        }
+
+        .header-subtitle {
+            font-size: 0.95rem;
+            color: #d1d5db;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .header-campaign {
+            font-size: 0.85rem;
+            color: #D7B477;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-top: 1rem;
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
+            letter-spacing: 0.1em;
+            margin-top: 0.75rem;
         }
 
-        .campaign-statement::before {
-            content: '';
-            width: 40px;
-            height: 2px;
-            background-color: #D7B477;
-        }
-
-        .disclaimer-text {
-            color: #B3B3B3;
-            font-size: 0.85rem;
-            margin-top: 1rem;
-            padding: 1rem;
-            background-color: rgba(20, 20, 22, 0.72);
+        .header-warning {
+            background-color: rgba(215, 180, 119, 0.1);
             border-left: 3px solid #D7B477;
-            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #d1d5db;
+            border-radius: 3px;
         }
 
+        /* Section headers */
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 2.5rem 0 1.5rem 0;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid #D7B477;
+        }
+
+        /* Metric cards - clean white with border accents */
         .metric-card {
-            border-radius: 4px;
+            background-color: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
             padding: 1.5rem;
             min-height: 180px;
-            border: 1px solid #D7B477;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            background: rgba(20, 20, 22, 0.72);
             display: flex;
             flex-direction: column;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s ease;
+        }
+
+        .metric-card:hover {
+            border-color: #D7B477;
+        }
+
+        .metric-card.status-compliant {
+            border-left: 4px solid #059669;
+        }
+
+        .metric-card.status-caution {
+            border-left: 4px solid #d97706;
+        }
+
+        .metric-card.status-critical {
+            border-left: 4px solid #dc2626;
         }
 
         .metric-label {
@@ -123,203 +139,189 @@ st.markdown(
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            color: #B3B3B3;
-            margin-bottom: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
         }
 
         .metric-value {
             font-size: 2rem;
             font-weight: 700;
             color: #D7B477;
-            margin-bottom: 0.75rem;
-            font-family: 'Barlow', Arial, sans-serif;
+            margin-bottom: 0.5rem;
+            font-family: 'Barlow', monospace;
         }
 
         .metric-detail {
             font-size: 0.8rem;
-            line-height: 1.6;
-            color: #B3B3B3;
+            line-height: 1.5;
+            color: #6b7280;
             margin-bottom: auto;
         }
 
         .metric-status {
             display: inline-block;
             margin-top: 1rem;
-            padding: 0.5rem 0.75rem;
-            border-radius: 3px;
+            padding: 0.4rem 0.75rem;
+            border-radius: 4px;
             font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.04em;
             width: fit-content;
-            background: rgba(215, 180, 119, 0.15);
-            color: #D7B477;
-            border: 1px solid #D7B477;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            border: 1px solid #d1d5db;
         }
 
-        .card-compliant {
-            border-left: 4px solid #059669;
-            border: 1px solid #059669;
+        .metric-card.status-compliant .metric-status {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #6ee7b7;
         }
 
-        .card-compliant .metric-status {
-            background: rgba(5, 150, 105, 0.15);
-            color: #10b981;
-            border: 1px solid #10b981;
+        .metric-card.status-caution .metric-status {
+            background-color: #fef3c7;
+            color: #78350f;
+            border-color: #fcd34d;
         }
 
-        .card-caution {
-            border-left: 4px solid #d97706;
-            border: 1px solid #d97706;
+        .metric-card.status-critical .metric-status {
+            background-color: #fee2e2;
+            color: #7f1d1d;
+            border-color: #fca5a5;
         }
 
-        .card-caution .metric-status {
-            background: rgba(217, 119, 6, 0.15);
-            color: #f59e0b;
-            border: 1px solid #f59e0b;
-        }
-
-        .card-critical {
-            border-left: 4px solid #dc2626;
-            border: 1px solid #dc2626;
-        }
-
-        .card-critical .metric-status {
-            background: rgba(220, 38, 38, 0.15);
-            color: #ef4444;
-            border: 1px solid #ef4444;
-        }
-
-        .section-header {
-            color: #ffffff;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-top: 2.5rem;
-            margin-bottom: 1.75rem;
-            border-bottom: 2px solid #D7B477;
-            padding-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.01em;
-        }
-
-        .section-header::before {
-            content: '';
-            display: block;
-            width: 50px;
-            height: 2px;
-            background-color: #D7B477;
-            margin-bottom: 0.75rem;
+        /* Control panel */
+        .control-panel {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .control-label {
-            color: #D7B477;
-            font-weight: 600;
             font-size: 0.9rem;
+            font-weight: 700;
+            color: #111827;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.03em;
             margin-bottom: 0.75rem;
             display: block;
         }
 
-        .info-text {
-            color: #B3B3B3;
-            line-height: 1.7;
-            font-size: 0.95rem;
+        .control-sublabel {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #374151;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
         }
 
-        .tab-description {
-            color: #B3B3B3;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-            font-weight: 400;
-        }
-
-        .sensitivity-container {
-            background: rgba(20, 20, 22, 0.72);
-            border-radius: 4px;
+        /* Data visualization containers */
+        .chart-container {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            border: 1px solid #D7B477;
         }
 
-        .sensitivity-label {
-            font-weight: 600;
-            color: #D7B477;
-            margin-bottom: 0.75rem;
+        .data-table {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        /* Info boxes */
+        .info-box {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 3px;
             font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
+            color: #1e40af;
         }
 
-        .sensitivity-value {
-            color: #10b981;
+        .info-box.warning {
+            background-color: #fef3c7;
+            border-left-color: #d97706;
+            color: #78350f;
+        }
+
+        .info-box.error {
+            background-color: #fee2e2;
+            border-left-color: #dc2626;
+            color: #7f1d1d;
+        }
+
+        .info-box.success {
+            background-color: #dcfce7;
+            border-left-color: #059669;
+            color: #065f46;
+        }
+
+        /* Tab styling */
+        .stTabs [data-baseweb="tab-list"] button {
             font-weight: 600;
-            font-size: 0.85rem;
+            color: #6b7280;
         }
 
-        /* Dark theme for data tables */
-        [data-testid="stDataFrame"] {
-            background: rgba(20, 20, 22, 0.72);
+        .stTabs [aria-selected="true"] {
+            color: #111827 !important;
+            border-bottom-color: #D7B477 !important;
         }
 
-        /* Sidebar styling */
+        /* Sidebar */
         [data-testid="stSidebar"] {
-            background: linear-gradient(180deg, #1a1a1c 0%, #0f0f0f 100%);
-            border-right: 1px solid #D7B477;
+            background-color: #f9fafb;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        /* Expanders */
+        .streamlit-expanderHeader {
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
         }
 
         /* Dividers */
         hr {
-            background-color: #D7B477;
+            background-color: #e5e7eb;
             border: none;
             height: 1px;
+            margin: 1.5rem 0;
         }
 
-        /* Expander styling */
-        [data-testid="stExpander"] {
-            background: rgba(20, 20, 22, 0.72);
-            border: 1px solid #D7B477;
-            border-radius: 4px;
+        /* Text utilities */
+        .text-muted {
+            color: #6b7280;
         }
 
-        /* Focus states for accessibility */
-        button:focus-visible {
-            outline: 2px solid #D7B477;
-        }
-
-        input:focus-visible {
-            outline: 2px solid #D7B477;
-        }
-
-        /* Campaign statement styling */
-        .campaign-principles {
-            display: flex;
-            gap: 2rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .principle {
-            flex: 1;
-            min-width: 250px;
-            padding: 1rem;
-            border-left: 3px solid #D7B477;
-            background: rgba(20, 20, 22, 0.5);
-        }
-
-        .principle-label {
+        .text-accent {
             color: #D7B477;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-weight: 600;
         }
 
-        .principle-text {
-            color: #ffffff;
-            font-size: 0.95rem;
-            line-height: 1.5;
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 1.5rem;
+            }
+
+            .header-title {
+                font-size: 1.5rem;
+            }
+
+            .metric-value {
+                font-size: 1.5rem;
+            }
+
+            .block-container {
+                padding: 1rem;
+            }
         }
     </style>
     """,
@@ -327,18 +329,18 @@ st.markdown(
 )
 
 
-def card_class(status: str) -> str:
-    """Return the CSS class used for the metric card."""
+def get_card_class(status: str) -> str:
+    """Return card class based on status."""
     normalised = str(status).upper().strip()
     if normalised == "GREEN":
-        return "card-compliant"
+        return "status-compliant"
     if normalised == "RED":
-        return "card-critical"
-    return "card-caution"
+        return "status-critical"
+    return "status-caution"
 
 
-def metric_status_label(status: str) -> str:
-    """Return the formal label for the metric status."""
+def get_status_label(status: str) -> str:
+    """Return formal status label."""
     normalised = str(status).upper().strip()
     if normalised == "GREEN":
         return "COMPLIANT"
@@ -347,18 +349,14 @@ def metric_status_label(status: str) -> str:
     return "AT RISK"
 
 
-def metric_card(
-    label: str,
-    value: str,
-    detail: str,
-    status: str,
-) -> None:
-    """Render a metric card with ECFC brand styling."""
-    normalised = str(status).upper().strip()
-    status_label = metric_status_label(normalised)
+def render_metric_card(label: str, value: str, detail: str, status: str) -> None:
+    """Render a metric card."""
+    card_class = get_card_class(status)
+    status_label = get_status_label(status)
+    
     st.markdown(
         f"""
-        <div class="metric-card {card_class(normalised)}">
+        <div class="metric-card {card_class}">
             <div class="metric-label">{label}</div>
             <div class="metric-value">{value}</div>
             <div class="metric-detail">{detail}</div>
@@ -371,6 +369,7 @@ def metric_card(
 
 @st.cache_data
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Load all required data files."""
     return (
         pd.read_csv(DATA_DIR / "line_items.csv"),
         pd.read_csv(DATA_DIR / "category_weightings.csv"),
@@ -379,25 +378,28 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]
     )
 
 
+# Load data
 line_items, default_weights, thresholds, movement_history = load_data()
 
+# Render page header
 st.markdown(
-    '<div class="dashboard-header">'
-    '<div class="dashboard-title">Exeter City Football Club<br /><span class="dashboard-title-accent">Solvency Analysis Dashboard</span></div>'
-    '<div class="dashboard-subtitle">'
-    'Short-term liquidity position (13 weeks) and long-term sustainability position (18 months) analysis.'
-    '</div>'
-    '<div class="campaign-statement">'
-    'Community-driven • Academy-powered • Supporter first'
-    '</div>'
-    '<div class="disclaimer-text">'
-    '⚠️ Proof of Concept. For illustrative purposes only. Subject to validation and formal approval prior to operational use.'
-    '</div>'
-    '</div>',
+    """
+    <div class="page-header">
+        <div class="header-title">Exeter City Football Club</div>
+        <div class="header-title" style="font-size: 1.5rem; color: #D7B477;">Solvency Analysis Dashboard</div>
+        <div class="header-subtitle">
+            Financial analysis tool for monitoring short-term liquidity (13 weeks) and long-term sustainability (18 months).
+        </div>
+        <div class="header-campaign">Community-driven • Academy-powered • Supporter first</div>
+        <div class="header-warning">
+            ⚠️ Proof of Concept. For illustrative purposes only. Subject to validation and formal approval prior to operational use.
+        </div>
+    </div>
+    """,
     unsafe_allow_html=True,
 )
 
-# Initialize session state for sensitivity factors
+# Initialize session state
 if 'revenue_adjustment' not in st.session_state:
     st.session_state.revenue_adjustment = 0
 if 'operating_costs_adjustment' not in st.session_state:
@@ -407,26 +409,21 @@ if 'cashflow_timing_adjustment' not in st.session_state:
 if 'probability_adjustment' not in st.session_state:
     st.session_state.probability_adjustment = 0
 
-# ---------------------------------------------------------------------
-# CONTROLS
-# ---------------------------------------------------------------------
+# Sidebar configuration
 with st.sidebar:
-    st.markdown('<div class="control-label">Model Configuration</div>', unsafe_allow_html=True)
-    st.divider()
-    
-    scenario = st.selectbox("Scenario", ["base"], index=0, help="Select the forecast scenario to analyse")
+    st.markdown("### Configuration")
+    scenario = st.selectbox("Scenario", ["base"], index=0)
     entity_view = st.selectbox(
         "Entity View",
         ["Consolidated", "Club", "Trust"],
-        help="Consolidated view excludes intercompany transactions; standalone views retain selected entity only",
     )
-    
     st.divider()
     st.caption(
-        "Consolidated view applies intercompany elimination rules. "
-        "Standalone entity views present uneliminated positions for the selected entity."
+        "**Consolidated**: Excludes intercompany transactions. "
+        "**Standalone**: Shows uneliminated entity position."
     )
 
+# Determine filtered items and consolidation flag
 if entity_view == "Club":
     filtered_items = line_items[line_items["entity"].eq("Club")].copy()
     consolidated = False
@@ -437,12 +434,7 @@ else:
     filtered_items = line_items.copy()
     consolidated = True
 
-# ---------------------------------------------------------------------
-# ASSUMPTIONS - CATEGORY WEIGHTINGS
-# Store assumptions in the CSV as decimals (1.00 = 100%).
-# Display and edit them here as whole-number percentages (100 = 100%).
-# Do not use Streamlit's percentage formatter, because that treats 1 as 1%.
-# ---------------------------------------------------------------------
+# Category weightings
 display_weights = default_weights.copy()
 display_weights["weight_3_month"] = (
     pd.to_numeric(display_weights["weight_3_month"], errors="coerce") * 100
@@ -451,52 +443,45 @@ display_weights["weight_18_month"] = (
     pd.to_numeric(display_weights["weight_18_month"], errors="coerce") * 100
 )
 
-with st.expander("Category Assumption Adjustments", expanded=False):
-    st.markdown('<div class="info-text">', unsafe_allow_html=True)
-    st.write(
-        "Modify category weighting assumptions by entering values as whole-number percentages. "
-        "For example: **100** for 100%, **75** for 75%, **0** for 0%. "
-        "Adjustments are applied without modifying underlying line-item data."
+with st.expander("📋 Adjust Category Assumptions", expanded=False):
+    st.info(
+        "Modify weighting assumptions as percentages (0–100). Adjustments apply without changing underlying data."
     )
-    st.markdown('</div>', unsafe_allow_html=True)
-
+    
     edited_display_weights = st.data_editor(
         display_weights,
         disabled=["direction", "category", "application_note"],
         column_config={
-            "direction": st.column_config.TextColumn("Contributor Type"),
-            "category": st.column_config.TextColumn("Category"),
+            "direction": st.column_config.TextColumn("Contributor Type", width=120),
+            "category": st.column_config.TextColumn("Category", width=120),
             "weight_3_month": st.column_config.NumberColumn(
-                "13-Week Weighting (%)",
+                "13-Week %",
                 min_value=0.0,
                 max_value=100.0,
                 step=5.0,
                 format="%.0f",
-                help="Percentage assumption: 100 = 100%",
             ),
             "weight_18_month": st.column_config.NumberColumn(
-                "18-Month Weighting (%)",
+                "18-Month %",
                 min_value=0.0,
                 max_value=100.0,
                 step=5.0,
                 format="%.0f",
-                help="Percentage assumption: 100 = 100%",
             ),
-            "application_note": st.column_config.TextColumn("Application Notes"),
+            "application_note": st.column_config.TextColumn("Notes", width=150),
         },
         hide_index=True,
         use_container_width=True,
         key="category_weighting_editor",
     )
-
-# Convert whole-number percentages back to decimal values for the engine.
-edited_weights = edited_display_weights.copy()
-edited_weights["weight_3_month"] = (
-    pd.to_numeric(edited_weights["weight_3_month"], errors="coerce") / 100
-)
-edited_weights["weight_18_month"] = (
-    pd.to_numeric(edited_weights["weight_18_month"], errors="coerce") / 100
-)
+    
+    edited_weights = edited_display_weights.copy()
+    edited_weights["weight_3_month"] = (
+        pd.to_numeric(edited_weights["weight_3_month"], errors="coerce") / 100
+    )
+    edited_weights["weight_18_month"] = (
+        pd.to_numeric(edited_weights["weight_18_month"], errors="coerce") / 100
+    )
 
 threshold_map = thresholds.set_index("metric")
 short_min = float(threshold_map.loc["3_month", "minimum_threshold"])
@@ -504,339 +489,263 @@ short_target = float(threshold_map.loc["3_month", "target_threshold"])
 long_min = float(threshold_map.loc["18_month", "minimum_threshold"])
 long_target = float(threshold_map.loc["18_month", "target_threshold"])
 
-# Apply sensitivity adjustments to line items
+# Apply sensitivity adjustments
 adjusted_items = filtered_items.copy()
 if st.session_state.revenue_adjustment != 0:
-    adjusted_items.loc[adjusted_items["direction"].eq("positive"), "gross_amount"] *= (1 + st.session_state.revenue_adjustment / 100)
+    adjusted_items.loc[adjusted_items["direction"].eq("positive"), "gross_amount"] *= (
+        1 + st.session_state.revenue_adjustment / 100
+    )
 if st.session_state.operating_costs_adjustment != 0:
-    adjusted_items.loc[adjusted_items["direction"].eq("negative"), "gross_amount"] *= (1 + st.session_state.operating_costs_adjustment / 100)
+    adjusted_items.loc[adjusted_items["direction"].eq("negative"), "gross_amount"] *= (
+        1 + st.session_state.operating_costs_adjustment / 100
+    )
 if st.session_state.cashflow_timing_adjustment != 0:
-    adjusted_items["relevance_3_month"] = adjusted_items["relevance_3_month"].clip(0, 1) * (1 + st.session_state.cashflow_timing_adjustment / 100)
+    adjusted_items["relevance_3_month"] = (
+        adjusted_items["relevance_3_month"].clip(0, 1) * (1 + st.session_state.cashflow_timing_adjustment / 100)
+    )
 if st.session_state.probability_adjustment != 0:
-    adjusted_items["probability"] = adjusted_items["probability"].clip(0, 1) * (1 + st.session_state.probability_adjustment / 100)
+    adjusted_items["probability"] = (
+        adjusted_items["probability"].clip(0, 1) * (1 + st.session_state.probability_adjustment / 100)
+    )
 
+# Calculate contributions and solvency
 short_detail = calculate_contributions(
-    adjusted_items,
-    edited_weights,
-    "3_month",
-    scenario=scenario,
-    consolidated=consolidated,
+    adjusted_items, edited_weights, "3_month", scenario=scenario, consolidated=consolidated
 )
 long_detail = calculate_contributions(
-    adjusted_items,
-    edited_weights,
-    "18_month",
-    scenario=scenario,
-    consolidated=consolidated,
+    adjusted_items, edited_weights, "18_month", scenario=scenario, consolidated=consolidated
 )
 
-short_result = calculate_solvency(
-    short_detail,
-    "3_month",
-    short_min,
-    short_target,
-)
-long_result = calculate_solvency(
-    long_detail,
-    "18_month",
-    long_min,
-    long_target,
-)
+short_result = calculate_solvency(short_detail, "3_month", short_min, short_target)
+long_result = calculate_solvency(long_detail, "18_month", long_min, long_target)
 
-# ---------------------------------------------------------------------
-# SENSITIVITY ANALYSIS
-# ---------------------------------------------------------------------
-st.markdown('<div class="section-header">Sensitivity Analysis</div>', unsafe_allow_html=True)
+# Sensitivity Analysis Section
+st.markdown('<div class="section-title">Sensitivity Analysis</div>', unsafe_allow_html=True)
 
-sensitivity_expander = st.expander("Adjust Key Factors to Analyze Sensitivity", expanded=False)
-
-with sensitivity_expander:
-    st.markdown('<div class="info-text">', unsafe_allow_html=True)
-    st.write(
-        "Model solvency position under different assumptions. Adjust factors as percentages to see impact on liquidity and sustainability."
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
+with st.expander("🎯 Adjust Key Factors", expanded=False):
+    st.info("Model solvency under different assumptions. Adjust factors to see real-time impact.")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown('<div class="sensitivity-label">Revenue / Positive Cash Inflows</div>', unsafe_allow_html=True)
+        st.markdown('<div class="control-sublabel">Revenue Impact</div>', unsafe_allow_html=True)
         revenue_adj = st.slider(
-            "Revenue adjustment (%)",
+            "Revenue / Positive Inflows (%)",
             min_value=-50,
             max_value=50,
             value=st.session_state.revenue_adjustment,
             step=5,
             label_visibility="collapsed",
-            help="Adjust expected revenue by percentage (e.g., -10 = 10% reduction)",
         )
         if revenue_adj != st.session_state.revenue_adjustment:
             st.session_state.revenue_adjustment = revenue_adj
             st.rerun()
         
-        st.markdown('<div class="sensitivity-label">Operating Costs / Negative Cash Outflows</div>', unsafe_allow_html=True)
+        st.markdown('<div class="control-sublabel">Cost Impact</div>', unsafe_allow_html=True)
         costs_adj = st.slider(
-            "Operating costs adjustment (%)",
+            "Operating Costs / Outflows (%)",
             min_value=-50,
             max_value=50,
             value=st.session_state.operating_costs_adjustment,
             step=5,
             label_visibility="collapsed",
-            help="Adjust expected costs by percentage (e.g., +10 = 10% increase)",
         )
         if costs_adj != st.session_state.operating_costs_adjustment:
             st.session_state.operating_costs_adjustment = costs_adj
             st.rerun()
     
     with col2:
-        st.markdown('<div class="sensitivity-label">Cash Flow Timing / Horizon Relevance</div>', unsafe_allow_html=True)
+        st.markdown('<div class="control-sublabel">Timing Impact</div>', unsafe_allow_html=True)
         timing_adj = st.slider(
-            "Cashflow timing adjustment (%)",
+            "Cashflow Timing (%)",
             min_value=-50,
             max_value=50,
             value=st.session_state.cashflow_timing_adjustment,
             step=5,
             label_visibility="collapsed",
-            help="Adjust expected cash flow timing by percentage (e.g., -20 = delays reduce near-term availability)",
         )
         if timing_adj != st.session_state.cashflow_timing_adjustment:
             st.session_state.cashflow_timing_adjustment = timing_adj
             st.rerun()
         
-        st.markdown('<div class="sensitivity-label">Probability of Realization</div>', unsafe_allow_html=True)
+        st.markdown('<div class="control-sublabel">Probability Impact</div>', unsafe_allow_html=True)
         prob_adj = st.slider(
-            "Probability adjustment (%)",
+            "Probability of Realization (%)",
             min_value=-50,
             max_value=50,
             value=st.session_state.probability_adjustment,
             step=5,
             label_visibility="collapsed",
-            help="Adjust probability weighting by percentage (e.g., -15 = reduce confidence in assumptions)",
         )
         if prob_adj != st.session_state.probability_adjustment:
             st.session_state.probability_adjustment = prob_adj
             st.rerun()
     
-    # Display sensitivity summary
     if any([revenue_adj, costs_adj, timing_adj, prob_adj]):
         st.divider()
-        st.write("**Sensitivity Summary**")
-        sensitivity_summary = []
+        summary_items = []
         if revenue_adj != 0:
-            sensitivity_summary.append(f"Revenue: {revenue_adj:+d}%")
+            summary_items.append(f"Revenue {revenue_adj:+d}%")
         if costs_adj != 0:
-            sensitivity_summary.append(f"Operating costs: {costs_adj:+d}%")
+            summary_items.append(f"Costs {costs_adj:+d}%")
         if timing_adj != 0:
-            sensitivity_summary.append(f"Cashflow timing: {timing_adj:+d}%")
+            summary_items.append(f"Timing {timing_adj:+d}%")
         if prob_adj != 0:
-            sensitivity_summary.append(f"Probability: {prob_adj:+d}%")
-        
-        st.caption(" | ".join(sensitivity_summary))
+            summary_items.append(f"Probability {prob_adj:+d}%")
+        st.caption(f"**Active adjustments**: {' • '.join(summary_items)}")
 
-# ---------------------------------------------------------------------
-# HEADLINE SOLVENCY POSITION
-# ---------------------------------------------------------------------
-st.markdown('<div class="section-header">Solvency Position Summary</div>', unsafe_allow_html=True)
+# Solvency Position Section
+st.markdown('<div class="section-title">Solvency Position</div>', unsafe_allow_html=True)
 
-c1, c2, c3, c4 = st.columns(4)
+col1, col2, col3, col4 = st.columns(4)
 
-with c1:
-    metric_card(
-        "13-Week Solvency Ratio",
+with col1:
+    render_metric_card(
+        "13-Week Ratio",
         f"{short_result.ratio:.2f}x",
-        f"Minimum: {short_min:.2f}x | Target: {short_target:.2f}x",
+        f"Min: {short_min:.2f}x • Target: {short_target:.2f}x",
         short_result.status,
     )
 
-with c2:
-    metric_card(
-        "13-Week Liquidity Headroom",
+with col2:
+    render_metric_card(
+        "13-Week Headroom",
         f"£{short_result.headroom:,.0f}",
-        (
-            f"Resources: £{short_result.positives:,.0f} | "
-            f"Requirements: £{short_result.negatives:,.0f}"
-        ),
+        f"Resources: £{short_result.positives:,.0f}\nRequirements: £{short_result.negatives:,.0f}",
         short_result.status,
     )
 
-with c3:
-    metric_card(
-        "18-Month Solvency Ratio",
+with col3:
+    render_metric_card(
+        "18-Month Ratio",
         f"{long_result.ratio:.2f}x",
-        f"Minimum: {long_min:.2f}x | Target: {long_target:.2f}x",
+        f"Min: {long_min:.2f}x • Target: {long_target:.2f}x",
         long_result.status,
     )
 
-with c4:
-    metric_card(
-        "18-Month Sustainability Headroom",
+with col4:
+    render_metric_card(
+        "18-Month Headroom",
         f"£{long_result.headroom:,.0f}",
-        (
-            f"Resources: £{long_result.positives:,.0f} | "
-            f"Requirements: £{long_result.negatives:,.0f}"
-        ),
+        f"Resources: £{long_result.positives:,.0f}\nRequirements: £{long_result.negatives:,.0f}",
         long_result.status,
     )
 
-st.write("")
+# Trends Section
+st.markdown('<div class="section-title">Historical Trends</div>', unsafe_allow_html=True)
 
-# Trend analysis
-st.markdown('<div class="section-header">Trend Analysis</div>', unsafe_allow_html=True)
-
-left, right = st.columns(2)
-with left:
+col1, col2 = st.columns(2)
+with col1:
     st.plotly_chart(
         trend_chart(
             movement_history,
             "3_month",
             short_min,
             short_target,
-            title="13-Week Solvency Ratio — Historical Trend",
+            title="13-Week Solvency Ratio",
         ),
         use_container_width=True,
     )
 
-with right:
+with col2:
     st.plotly_chart(
         trend_chart(
             movement_history,
             "18_month",
             long_min,
             long_target,
-            title="18-Month Solvency Ratio — Historical Trend",
+            title="18-Month Solvency Ratio",
         ),
         use_container_width=True,
     )
 
-# Category contribution analysis
-st.markdown('<div class="section-header">Contribution Analysis by Category</div>', unsafe_allow_html=True)
+# Contributions Section
+st.markdown('<div class="section-title">Contribution Analysis</div>', unsafe_allow_html=True)
 
 short_summary = category_summary(short_detail)
 long_summary = category_summary(long_detail)
 
-left, right = st.columns(2)
-with left:
+col1, col2 = st.columns(2)
+with col1:
     st.plotly_chart(
-        category_chart(
-            short_summary,
-            "13-Week Contribution by Category",
-        ),
+        category_chart(short_summary, "13-Week Contributions"),
         use_container_width=True,
     )
 
-with right:
+with col2:
     st.plotly_chart(
-        category_chart(
-            long_summary,
-            "18-Month Contribution by Category",
-        ),
+        category_chart(long_summary, "18-Month Contributions"),
         use_container_width=True,
     )
 
 st.divider()
 
-# Detailed analysis tabs
-st.markdown('<div class="section-header">Detailed Analysis</div>', unsafe_allow_html=True)
+# Detailed Analysis Tabs
+st.markdown('<div class="section-title">Detailed Analysis</div>', unsafe_allow_html=True)
 
 tab1, tab2, tab3, tab4 = st.tabs(
-    [
-        "Movement Analysis",
-        "Contribution Detail",
-        "Line-Item Calculation",
-        "Data Validation",
-    ]
+    ["Movement", "Contributions", "Calculations", "Validation"]
 )
 
 with tab1:
-    st.markdown('<div class="tab-description">Movement in liquidity and sustainability headroom between reporting periods</div>', unsafe_allow_html=True)
-    m1, m2 = st.columns(2)
-    with m1:
+    col1, col2 = st.columns(2)
+    with col1:
         st.plotly_chart(
             movement_waterfall(movement_history, "3_month"),
             use_container_width=True,
         )
-    with m2:
+    with col2:
         st.plotly_chart(
             movement_waterfall(movement_history, "18_month"),
             use_container_width=True,
         )
 
 with tab2:
-    st.markdown('<div class="tab-description">Eligible contributions aggregated by contributor type and category</div>', unsafe_allow_html=True)
-    p1, p2 = st.columns(2)
-    with p1:
-        st.write("**13-Week Contribution Summary**")
-        st.dataframe(
-            short_summary,
-            hide_index=True,
-            use_container_width=True,
-        )
-    with p2:
-        st.write("**18-Month Contribution Summary**")
-        st.dataframe(
-            long_summary,
-            hide_index=True,
-            use_container_width=True,
-        )
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("13-Week")
+        st.dataframe(short_summary, use_container_width=True, hide_index=True)
+    with col2:
+        st.subheader("18-Month")
+        st.dataframe(long_summary, use_container_width=True, hide_index=True)
 
 with tab3:
-    st.markdown('<div class="tab-description">Line-item calculation detail with applied assumptions and eligible contribution</div>', unsafe_allow_html=True)
-    horizon = st.radio(
-        "Select calculation horizon:",
-        ["3_month", "18_month"],
-        horizontal=True,
-        format_func=lambda x: "13-Week" if x == "3_month" else "18-Month",
-    )
+    horizon = st.radio("Horizon:", ["3_month", "18_month"], horizontal=True)
     detail = short_detail if horizon == "3_month" else long_detail
-
+    
     display_columns = [
-        "record_id",
-        "entity",
-        "source_statement",
-        "source_account",
-        "line_item",
-        "forecast_period",
-        "due_date",
-        "direction",
-        "category",
-        "gross_amount",
-        "applied_relevance",
-        "applied_weight",
-        "probability",
-        "liquidity_haircut",
-        "discount_factor",
-        "eligible_contribution",
-        "signed_contribution",
+        "record_id", "entity", "source_statement", "category", "gross_amount",
+        "applied_weight", "probability", "eligible_contribution",
         "data_quality_status",
     ]
-
+    
     st.dataframe(
         detail[display_columns].sort_values(
-            ["direction", "category", "eligible_contribution"],
-            ascending=[True, True, False],
+            ["category", "eligible_contribution"], ascending=[True, False]
         ),
-        hide_index=True,
         use_container_width=True,
+        hide_index=True,
     )
-
+    
     st.download_button(
-        "Download Line-Item Calculation Detail (CSV)",
+        "Download Detail (CSV)",
         detail[display_columns].to_csv(index=False),
-        file_name=f"solvency_calculation_{horizon}_detail.csv",
+        file_name=f"solvency_{horizon}.csv",
         mime="text/csv",
     )
 
 with tab4:
-    st.markdown('<div class="tab-description">Data integrity and consistency validation checks</div>', unsafe_allow_html=True)
     checks = validate_inputs(filtered_items, edited_weights)
-    st.dataframe(
-        checks,
-        hide_index=True,
-        use_container_width=True,
-    )
-
+    st.dataframe(checks, use_container_width=True, hide_index=True)
+    
     failed = checks["Status"].eq("FAIL").sum()
     if failed:
-        st.error(f"⚠️ {failed} validation check(s) failed. Review data quality before using results in decision-making.")
+        st.markdown(
+            f'<div class="info-box error">⚠️ {failed} check(s) failed</div>',
+            unsafe_allow_html=True,
+        )
     else:
-        st.success("✓ All validation checks passed. Data quality standards met.")
+        st.markdown(
+            '<div class="info-box success">✓ All checks passed</div>',
+            unsafe_allow_html=True,
+        )
